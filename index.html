@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniName Python - Terminal Logo Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Momo Trust Display';
+            src: local('Momo Trust Display'), local('MomoTrustDisplay'),
+                 url('https://fonts.cdnfonts.com/s/92036/MomoTrustDisplay-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --bg-start: #000103;
+            --bg-end: #030e21;
+            --accent: #00f2fe;
+            --accent-purple: #4facfe;
+            --text-main: #e2e8f0;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-glow: rgba(0, 242, 254, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        header {
+            padding: 60px 20px 20px;
+            text-align: center;
+        }
+
+        .hero-title-container {
+            display: inline-block;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 24px 60px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 20px var(--glass-glow);
+        }
+
+        h1.site-title {
+            font-family: 'Momo Trust Display', 'JetBrains Mono', monospace;
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        main {
+            max-width: 960px;
+            width: 92%;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .btn-3d {
+            background: #091322;
+            color: #cbd5e1;
+            border: 1px solid var(--glass-border);
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 0 #020710, 0 5px 10px rgba(0,0,0,0.4);
+            transition: transform 0.1s, box-shadow 0.1s, background 0.3s, border-color 0.3s;
+            text-align: center;
+            user-select: none;
+        }
+
+        .btn-3d:hover {
+            border-color: rgba(0, 242, 254, 0.4);
+            color: #fff;
+        }
+
+        .btn-3d:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #020710, 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        .btn-3d.active {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(79, 172, 254, 0.05));
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 4px 0 #005f6b, 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #1e293b;
+            border: 1px solid var(--glass-border);
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #94a3b8;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: rgba(0, 242, 254, 0.2);
+            border-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+            background-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .color-pickers {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+        }
+
+        /* MacOS Terminal Window */
+        .terminal-window {
+            background: #000000;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            margin-bottom: 16px;
+        }
+
+        .terminal-header {
+            background: #121824;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mac-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .terminal-body {
+            padding: 24px;
+            overflow-x: auto;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        pre#outputLogo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.1;
+            letter-spacing: 0px;
+            white-space: pre;
+            text-align: left;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: center;
+        }
+
+        pre#outputLogo.italicized {
+            transform: skewX(-12deg);
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .btn-copy-icon {
+            width: 46px;
+            height: 46px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .btn-copy-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .copy-dropdown {
+            position: absolute;
+            bottom: 56px;
+            right: 0;
+            background: #0b1528;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            z-index: 20;
+            width: 240px;
+        }
+
+        .copy-dropdown.show {
+            display: flex;
+        }
+
+        .copy-option {
+            background: transparent;
+            border: none;
+            color: #cbd5e1;
+            padding: 10px 14px;
+            text-align: left;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .copy-option:hover {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--accent);
+        }
+
+        .guide-section {
+            font-family: 'Google Sans', sans-serif;
+            line-height: 1.7;
+            color: #94a3b8;
+        }
+
+        .guide-section h2 {
+            font-size: 1.5rem;
+            color: #f1f5f9;
+            margin-bottom: 16px;
+        }
+
+        .guide-section p {
+            margin-bottom: 14px;
+        }
+
+        .guide-section ul {
+            margin-left: 20px;
+            margin-bottom: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.9rem;
+            color: #64748b;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        footer i {
+            display: block;
+            font-style: italic;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 6px;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .discord-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 242, 254, 0.9);
+            color: #000;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.4);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            h1.site-title { font-size: 2.2rem; }
+            .hero-title-container { padding: 16px 30px; }
+            .glass-card { padding: 20px; }
+            .controls-row { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="scroll-reveal">
+        <div class="hero-title-container">
+            <h1 class="site-title">UniName Python</h1>
+        </div>
+    </header>
+
+    <main>
+        <section class="glass-card scroll-reveal">
+            <div class="input-group">
+                <label class="input-label">Tên Thương Hiệu</label>
+                <input type="text" id="brandInput" value="PYTHON" placeholder="Nhập tên thương hiệu..." autocomplete="off">
+            </div>
+
+            <label class="input-label">Kiểu Logo</label>
+            <div class="options-grid">
+                <button class="btn-3d active" data-style="1">Kí tự gạch</button>
+                <button class="btn-3d" data-style="2">Kí tự Unicode Block</button>
+                <button class="btn-3d" data-style="3">Kí tự khung</button>
+                <button class="btn-3d" data-style="4">Kí tự khung + Unicode Block</button>
+            </div>
+
+            <div class="controls-row">
+                <div class="control-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="italicToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span style="font-size: 0.85rem; color: #cbd5e1;">Nghiêng</span>
+                </div>
+
+                <div class="control-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="gradientToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span style="font-size: 0.85rem; color: #cbd5e1;">Gradient Màu</span>
+                </div>
+
+                <div class="color-pickers" id="colorPickersContainer">
+                    <input type="color" id="color1" value="#00f2fe">
+                    <input type="color" id="color2" value="#4facfe" style="display: none;">
+                </div>
+            </div>
+
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="mac-dots">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                </div>
+                <div class="terminal-body">
+                    <pre id="outputLogo"></pre>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn-3d btn-copy-icon" id="copyBtn" title="Sao chép">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                </button>
+                <div class="copy-dropdown" id="copyDropdown">
+                    <button class="copy-option" id="copyTextOnly">Copy mỗi kí tự logo</button>
+                    <button class="copy-option" id="copyWithCode">Copy kèm mã nguồn Python</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass-card guide-section scroll-reveal">
+            <h2>Hướng dẫn & Giới thiệu</h2>
+            <p><strong>UniName Python</strong> là công cụ biên dịch tên thương hiệu thành logo nghệ thuật dạng chuỗi ký tự Unicode và ASCII chuyên nghiệp dành cho ứng dụng dòng lệnh Python (CLI Header Banner).</p>
+            <p>Các tính năng chính:</p>
+            <ul>
+                <li><strong>Biên dịch ký tự gạch:</strong> Dùng bộ ký tự xược <code>/ \ _ |</code> thiết kế chữ nghiêng Slant chuẩn FIGlet.</li>
+                <li><strong>Biên dịch Unicode Block:</strong> Dùng các khối đặc ANSI <code>█ ▀ ▄</code> cho phong cách giao diện Terminal 3D.</li>
+                <li><strong>Biên dịch Kí tự khung:</strong> Dùng các ký tự viền khung đôi Unicode <code>╔ ═ ╗ ║ ╚ ╝</code> mảnh mai, tinh tế.</li>
+                <li><strong>Biên dịch Khung + Block:</strong> Kết hợp viền khung góc và khối đặc cho phong cách cổ điển.</li>
+                <li><strong>Hỗ trợ phối màu Gradient & Mã Python:</strong> Xem trước màu sắc thực tế và xuất mã nguồn kèm lệnh <code>print()</code> sẵn sàng sử dụng.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="scroll-reveal">
+        <i>Tool dev by Huy Hoang</i>
+        <i>Open Source In Repository</i>
+        <div class="footer-links">
+            <!-- Link Repo: Sẽ Thêm Sau -->
+            <a href="https://discord.gg/NnnAhrYj" target="_blank" rel="noopener">
+                <svg class="discord-icon" viewBox="0 0 127.14 96.36">
+                    <path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.91-72.14zM42.45 65.69c-6.58 0-12-6.05-12-13.46s5.3-13.46 12-13.46c6.75 0 12.1 6.09 12 13.46 0 7.41-5.3 13.46-12 13.46zm42.24 0c-6.58 0-12-6.05-12-13.46s5.3-13.46 12-13.46c6.75 0 12.1 6.09 12 13.46 0 7.41-5.3 13.46-12 13.46z"/>
+                </svg>
+                Discord
+            </a>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast">Đã sao chép vào bộ nhớ tạm!</div>
+
+    <script>
+        // Matrix Render Font Tables
+        const SLANT_SLASH = {
+            'A': ["   █████╗ ", "  ██╔══██╗", "  ███████║", "  ██╔══██║", "  ██║  ██║", "  ╚═╝  ╚═╝"],
+            'B': ["  ██████╗ ", "  ██╔══██╗", "  ██████╔╝", "  ██╔══██╗", "  ██████╔╝", "  ╚═════╝ "],
+            'C': ["   ██████╗", "  ██╔════╝", "  ██║     ", "  ██║     ", "  ╚██████╗", "   ╚═════╝"],
+            'D': ["  ██████╗ ", "  ██╔══██╗", "  ██║  ██║", "  ██║  ██║", "  ██████╔╝", "  ╚═════╝ "],
+            'E': ["  ███████╗", "  ██╔════╝", "  █████╗  ", "  ██╔══╝  ", "  ███████╗", "  ╚══════╝"],
+            'F': ["  ███████╗", "  ██╔════╝", "  █████╗  ", "  ██╔══╝  ", "  ██║     ", "  ╚═╝     "],
+            'G': ["   ██████╗", "  ██╔════╝", "  ██║  ███╗", " ██║   ██║", "  ╚██████╔╝", "   ╚═════╝ "],
+            'H': ["  ██║  ██║", "  ██║  ██║", "  ███████║", "  ██╔══██║", "  ██║  ██║", "  ╚═╝  ╚═╝"],
+            'I': ["  ██╗", "  ██║", "  ██║", "  ██║", "  ██║", "  ╚═╝"],
+            'J': ["   ██╗", "   ██║", "   ██║", "██ ██║", "╚████║", " ╚═══╝"],
+            'K': ["  ██╗  ██╗", "  ██║ ██╔╝", "  █████═╝ ", "  ██╔═██╗ ", "  ██║  ██╗", "  ╚═╝  ╚═╝"],
+            'L': ["  ██╗     ", "  ██║     ", "  ██║     ", "  ██║     ", "  ███████╗", "  ╚══════╝"],
+            'M': ["  ███╗   ███╗", "  ████╗ ████║", "  ██╔████╔██║", "  ██║╚██╔╝██║", "  ██║ ╚═╝ ██║", "  ╚═╝     ╚═╝"],
+            'N': ["  ███╗   ██╗", "  ████╗  ██║", "  ██╔██╗ ██║", "  ██║╚██╗██║", "  ██║ ╚████║", "  ╚═╝  ╚═══╝"],
+            'O': ["   ██████╗ ", "  ██╔═══██╗", "  ██║   ██║", "  ██║   ██║", "  ╚██████╔╝", "   ╚═════╝ "],
+            'P': ["  ██████╗ ", "  ██╔══██╗", "  ██████╔╝", "  ██╔═══╝ ", "  ██║     ", "  ╚═╝     "],
+            'Q': ["   ██████╗ ", "  ██╔═══██╗", "  ██║   ██║", "  ██║ █╗██║", "  ╚██████╔╝", "   ╚═══██╗ "],
+            'R': ["  ██████╗ ", "  ██╔══██╗", "  ██████╔╝", "  ██╔══██╗", "  ██║  ██║", "  ╚═╝  ╚═╝"],
+            'S': ["   ██████╗", "  ██╔════╝", "  ███████╗", "  ╚════██║", "  ███████║", "  ╚══════╝"],
+            'T': ["  ████████╗", "  ╚══██╔══╝", "     ██║   ", "     ██║   ", "     ██║   ", "     ╚═╝   "],
+            'U': ["  ██╗  ██╗", "  ██║  ██║", "  ██║  ██║", "  ██║  ██║", "  ╚██████╔╝", "   ╚═════╝ "],
+            'V': ["  ██╗   ██╗", "  ██║   ██║", "  ██║   ██║", "  ╚██╗ ██╔╝", "   ╚████╔╝ ", "    ╚═══╝  "],
+            'W': ["  ██╗    ██╗", "  ██║    ██║", "  ██║ █╗ ██║", "  ██║███╗██║", "  ╚███╔███╔╝", "   ╚══╝╚══╝ "],
+            'X': ["  ██╗  ██╗", "  ╚██╗██╔╝", "   ╚███╔╝ ", "   ██╔██╗ ", "  ██╔╝ ██╗", "  ╚═╝  ╚═╝"],
+            'Y': ["  ██╗   ██╗", "  ╚██╗ ██╔╝", "   ╚████╔╝ ", "    ╚██╔╝  ", "     ██║   ", "     ╚═╝   "],
+            'Z': ["  ████████╗", "  ╚══██╔══╝", "    ██╔╝   ", "   ██╔╝    ", "  ████████╗", "  ╚═══════╝"],
+            ' ': ["   ", "   ", "   ", "   ", "   ", "   "]
+        };
+
+        const ASCII_SLASH = {
+            'A': ["   /\\   ", "  /  \\  ", " / /\\ \\ ", "/ ____ \\", "/_/    \\_\\"],
+            'B': [" _____  ", "|  __ \\ ", "| |__) |", "|  _  / ", "| | \\ \\ ", "|_|  \\_\\"],
+            'C': ["  _____ ", " / ____|", "| |     ", "| |____ ", " \\_____|"],
+            'D': [" _____  ", "|  __ \\ ", "| |  | |", "| |__| |", "|_____/ "],
+            'E': [" ______ ", "|  ____|", "| |__   ", "|  __|  ", "| |____ ", "|______|"],
+            'F': [" ______ ", "|  ____|", "| |__   ", "|  __|  ", "| |     ", "|_|     "],
+            'G': ["  _____ ", " / ____|", "| |  __|", "| |__| |", " \\_____|"],
+            'H': [" _    _ ", "| |  | |", "| |__| |", "|  __  |", "| |  | |", "|_|  |_|"],
+            'I': [" _____ ", "|_   _|", "  | |  ", "  | |  ", " _| |_ ", "|_____|"],
+            'J': ["  _____ ", " |_____|", "    | | ", " _  | | ", "| |__| |", " \\____/ "],
+            'K': [" _  __ ", "| |/ / ", "| ' /  ", "| . \\  ", "| |\\ \\ ", "|_| \\_\\"],
+            'L': [" _      ", "| |     ", "| |     ", "| |____ ", "|______|"],
+            'M': ["  __  __ ", " |  \\/  |", " | \\  / |", " | |\\/| |", " | |  | |", " |_|  |_|"],
+            'N': [" _  ██ ", "| \\ | |", "|  \\| |", "| . ` |", "| |\\  |", "|_| \\_|"],
+            'O': ["  ____  ", " / __ \\ ", "| |  | |", "| |__| |", " \\____/ "],
+            'P': [" _____  ", "|  __ \\ ", "| |__) |", "|  ___/ ", "| |     ", "|_|     "],
+            'Q': ["  ____  ", " / __ \\ ", "| |  | |", "| |__| |", " \\___\\_\\"],
+            'R': [" _____  ", "|  __ \\ ", "| |__) |", "|  _  / ", "| | \\ \\ ", "|_|  \\_\\"],
+            'S': ["   _____ ", "  / ____|", " | (___  ", "  \\___ \\ ", "  ____) |", " |_____/ "],
+            'T': [" _______ ", "|_______|", "   | |   ", "   | |   ", "   | |   ", "   |_|   "],
+            'U': [" _    _ ", "| |  | |", "| |  | |", "| |__| |", " \\____/ "],
+            'V': [" __   __", " \\ \\ / /", "  \\ V / ", "   \\ /  ", "    V   "],
+            'W': [" _7 _7  ", "| | | | ", "| | | | ", "| |_| | ", " \\___/  "],
+            'X': [" __  __ ", " \\ \\/ / ", "  \\  /  ", "  /  \\  ", " /_/\\_\\ "],
+            'Y': ["__   __ ", "\\ \\ / / ", " \\ V /  ", "  | |   ", "  |_|   "],
+            'Z': [" ______ ", "|___  / ", "   / /  ", "  / /__ ", " /_____|"],
+            ' ': ["   ", "   ", "   ", "   ", "   "]
+        };
+
+        const DOUBLE_BOX = {
+            'A': [" ╔═╗ ", " ╠═╣ ", " ╩ ╩ "],
+            'B': [" ╔╦╗ ", " ╠╩╗ ", " ╩═╝ "],
+            'C': [" ╔═╗ ", " ║   ", " ╚═╝ "],
+            'D': [" ╔═╗ ", " ║ ║ ", " ╚═╝ "],
+            'E': [" ╔═╗ ", " ╠═  ", " ╚═╝ "],
+            'F': [" ╔═╗ ", " ╠═  ", " ╩   "],
+            'G': [" ╔═╗ ", " ║ ╦ ", " ╚═╝ "],
+            'H': [" ║ ║ ", " ╠═╣ ", " ╩ ╩ "],
+            'I': [" ╦ ", " ║ ", " ╩ "],
+            'J': [" ╦ ", " ║ ", " ╚═╝"],
+            'K': [" ╦ ╦ ", " ╠═╩╗", " ╩ ╩ "],
+            'L': [" ╦   ", " ║   ", " ╩═╝ "],
+            'M': [" ╔╦╗ ", " ║║║ ", " ╩ ╩ "],
+            'N': [" ╗ ╔ ", " ║║║ ", " ╩ ╚ "],
+            'O': [" ╔═╗ ", " ║ ║ ", " ╚═╝ "],
+            'P': [" ╔═╗ ", " ╠═╝ ", " ╩   "],
+            'Q': [" ╔═╗ ", " ║ ║ ", " ╚═╩═"],
+            'R': [" ╔═╗ ", " ╠╦╝ ", " ╩╚═ "],
+            'S': [" ╔═╗ ", " ╚═╗ ", " ╚═╝ "],
+            'T': [" ╔╦╗ ", "  ║  ", "  ╩  "],
+            'U': [" ║ ║ ", " ║ ║ ", " ╚═╝ "],
+            'V': [" ║ ║ ", " ║ ║ ", " ╚═╝ "],
+            'W': [" ╦ ╦ ", " ║║║ ", " ╚╩╝ "],
+            'X': [" ╔╗╔ ", " ╠╩╗ ", " ╩ ╩ "],
+            'Y': [" ╦ ╦ ", " ╚╦╝ ", "  ╩  "],
+            'Z': [" ╔═╗ ", " ╔═╝ ", " ╚═╝ "],
+            ' ': ["   ", "   ", "   "]
+        };
+
+        const BLOCK_MATRIX = {
+            'A': [" ▄▀▄ ", " █▀█ ", " ▀ ▀ "],
+            'B': [" █▀▄ ", " █▀▄ ", " ▀▀  "],
+            'C': [" ▄▀▀ ", " █   ", " ▀▀▀ "],
+            'D': [" █▀▄ ", " █ █ ", " ▀▀  "],
+            'E': [" █▀▀ ", " █▀▀ ", " ▀▀▀ "],
+            'F': [" █▀▀ ", " █▀▀ ", " ▀   "],
+            'G': [" ▄▀▀ ", " █ ▀ ", " ▀▀▀ "],
+            'H': [" █ █ ", " █▀█ ", " ▀ ▀ "],
+            'I': [" █ ", " █ ", " ▀ "],
+            'J': [" █ ", " █ ", " ▀▀ "],
+            'K': [" █ █ ", " █▀▄ ", " ▀ ▀ "],
+            'L': [" █   ", " █   ", " ▀▀▀ "],
+            'M': [" █▄█ ", " █ █ ", " ▀ ▀ "],
+            'N': [" █▄█ ", " █ █ ", " ▀ ▀ "],
+            'O': [" ▄▀▄ ", " █ █ ", " ▀▀▀ "],
+            'P': [" █▀▄ ", " █▀▀ ", " ▀   "],
+            'Q': [" ▄▀▄ ", " █ █ ", " ▀▀▄ "],
+            'R': [" █▀▄ ", " █▀▄ ", " ▀ ▀ "],
+            'S': [" ▄▀▀ ", " ▀▀▄ ", " ▀▀▀ "],
+            'T': [" █▀█ ", "  █  ", "  ▀  "],
+            'U': [" █ █ ", " █ █ ", " ▀▀▀ "],
+            'V': [" █ █ ", " █ █ ", "  ▀  "],
+            'W': [" █ █ ", " █ █ ", " ▀▄▀ "],
+            'X': [" █ █ ", "  █  ", " ▀ ▀ "],
+            'Y': [" █ █ ", " ▀█▀ ", "  ▀  "],
+            'Z': [" ▀▀█ ", " ▄▀  ", " ▀▀▀ "],
+            ' ': ["   ", "   ", "   "]
+        };
+
+        // State Elements
+        const brandInput = document.getElementById('brandInput');
+        const styleBtns = document.querySelectorAll('.options-grid .btn-3d');
+        const italicToggle = document.getElementById('italicToggle');
+        const gradientToggle = document.getElementById('gradientToggle');
+        const color1Input = document.getElementById('color1');
+        const color2Input = document.getElementById('color2');
+        const outputLogo = document.getElementById('outputLogo');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyDropdown = document.getElementById('copyDropdown');
+        const copyTextOnly = document.getElementById('copyTextOnly');
+        const copyWithCode = document.getElementById('copyWithCode');
+        const toast = document.getElementById('toast');
+
+        let activeStyle = 1;
+
+        function renderAscii() {
+            const text = (brandInput.value || "PYTHON").toUpperCase();
+            let matrixFont = ASCII_SLASH;
+
+            if (activeStyle === 1) matrixFont = ASCII_SLASH;
+            else if (activeStyle === 2) matrixFont = BLOCK_MATRIX;
+            else if (activeStyle === 3) matrixFont = DOUBLE_BOX;
+            else if (activeStyle === 4) matrixFont = SLANT_SLASH;
+
+            const height = matrixFont['A'].length;
+            let lines = Array(height).fill("");
+
+            for (let char of text) {
+                const glyph = matrixFont[char] || matrixFont[' '];
+                for (let i = 0; i < height; i++) {
+                    lines[i] += glyph[i] || " ";
+                }
+            }
+
+            const rawText = lines.join("\n");
+            outputLogo.textContent = rawText;
+
+            // Apply Italic Skew
+            if (italicToggle.checked) {
+                outputLogo.classList.add('italicized');
+            } else {
+                outputLogo.classList.remove('italicized');
+            }
+
+            // Apply Color / Gradient
+            if (gradientToggle.checked) {
+                color2Input.style.display = 'inline-block';
+                outputLogo.style.background = `linear-gradient(90deg, ${color1Input.value}, ${color2Input.value})`;
+                outputLogo.style.webkitBackgroundClip = 'text';
+                outputLogo.style.webkitTextFillColor = 'transparent';
+            } else {
+                color2Input.style.display = 'none';
+                outputLogo.style.background = 'none';
+                outputLogo.style.webkitBackgroundClip = 'unset';
+                outputLogo.style.webkitTextFillColor = color1Input.value;
+                outputLogo.style.color = color1Input.value;
+            }
+        }
+
+        // Event Listeners
+        brandInput.addEventListener('input', renderAscii);
+
+        styleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                styleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeStyle = parseInt(btn.dataset.style);
+                renderAscii();
+            });
+        });
+
+        italicToggle.addEventListener('change', renderAscii);
+        gradientToggle.addEventListener('change', renderAscii);
+        color1Input.addEventListener('input', renderAscii);
+        color2Input.addEventListener('input', renderAscii);
+
+        // Copy Dropdown Handler
+        copyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            copyDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            copyDropdown.classList.remove('show');
+        });
+
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        copyTextOnly.addEventListener('click', () => {
+            navigator.clipboard.writeText(outputLogo.textContent);
+            copyDropdown.classList.remove('show');
+            showToast();
+        });
+
+        copyWithCode.addEventListener('click', () => {
+            const logoText = outputLogo.textContent;
+            const pythonCode = `logo = """\n${logoText}\n"""\nprint(logo)`;
+            navigator.clipboard.writeText(pythonCode);
+            copyDropdown.classList.remove('show');
+            showToast();
+        });
+
+        // Scroll Reveal Effect
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // Initial Render
+        renderAscii();
+    </script>
+</body>
+</html>
